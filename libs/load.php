@@ -7,7 +7,7 @@ function load_template($name)
 
 function validate_credentials($username, $password)
 {
-    if ($username == "sibi@selfmade.ninja" and $password == "password") {
+    if ($username == "123@123" and $password == "password") {
         return true;
     } else {
         return false;
@@ -31,13 +31,18 @@ function signup($user, $pass, $email, $phone)
     $sql = "INSERT INTO `auth` (`username`, `password`, `email`, `phone`, `active`)
     VALUES ('$user', '$pass', '$email', '$phone', '1');";
     $error = false;
-    if ($conn->query($sql) === true) {
-        $error = false;
-    } else {
-        // echo "Error: " . $sql . "<br>" . $conn->error;
-        $error = $conn->error;
+    try {
+        if ($conn->query($sql) === true) {
+            // return true on success to match callers expecting a truthy success
+            $error = true;
+        } else {
+            $error = $conn->error;
+        }
+    } catch (mysqli_sql_exception $e) {
+        // catch database exceptions (e.g., duplicate key) and return the message
+        $error = $e->getMessage();
     }
-
+    
     $conn->close();
     return $error;
 }

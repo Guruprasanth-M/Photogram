@@ -13,7 +13,7 @@ if (isset($_POST['username']) and isset($_POST['password']) and isset($_POST['em
 
 <?php
     if ($signup) {
-        if (!$error) {
+        if ($error === true) {
             ?>
 <main class="container">
     <div class="bg-light p-5 rounded mt-3">
