@@ -57,13 +57,14 @@ class User
         $this->conn = Database::getConnection();
         $this->username = $username;
         $this->id = null;
-        $sql = "SELECT `id` FROM `auth` WHERE `username`= '$username' LIMIT 1";
+        $u = $this->conn->real_escape_string($username);
+        $sql = "SELECT `id` FROM `auth` WHERE `username`= '" . $u . "' LIMIT 1";
         $result = $this->conn->query($sql);
-        if ($result->num_rows) {
+        if ($result && $result->num_rows) {
             $row = $result->fetch_assoc();
             $this->id = $row['id'];
         } else {
-            throw new Exception("Username does't exist");
+            throw new Exception("Username doesn't exist");
         }
     }
 
@@ -76,6 +77,11 @@ class User
             return null;
         }
         $id = (int)$this->id;
+        // ensure column exists first to avoid SQL errors
+        $colRes = $this->conn->query("SHOW COLUMNS FROM `users` LIKE '" . $this->conn->real_escape_string($var) . "'");
+        if (!($colRes && $colRes->num_rows == 1)) {
+            return null;
+        }
         $sql = "SELECT `$var` FROM `users` WHERE `id` = $id LIMIT 1";
         $result = $this->conn->query($sql);
         if ($result && $result->num_rows == 1) {
@@ -96,8 +102,20 @@ class User
         }
         $id = (int)$this->id;
         $safe = $this->conn->real_escape_string($data);
+        // ensure column exists before attempting update
+        $colRes = $this->conn->query("SHOW COLUMNS FROM `users` LIKE '" . $this->conn->real_escape_string($var) . "'");
+        if (!($colRes && $colRes->num_rows == 1)) {
+            // column missing — avoid throwing SQL error
+            error_log('User::_set_data missing column: ' . $var);
+            return false;
+        }
         $sql = "UPDATE `users` SET `$var`='" . $safe . "' WHERE `id`=$id LIMIT 1";
-        return (bool)$this->conn->query($sql);
+        try {
+            return (bool)$this->conn->query($sql);
+        } catch (mysqli_sql_exception $e) {
+            error_log('User::_set_data query error: ' . $e->getMessage());
+            return false;
+        }
     }
 
     public function getUsername()
