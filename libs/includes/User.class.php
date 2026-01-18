@@ -22,6 +22,17 @@ class User
 
     public static function login($user, $pass)
     {
+        // validate using MD5-hashed password only
+        $md = md5($pass);
+        $conn = Database::getConnection();
+        $user_esc = $conn->real_escape_string($user);
+        $query = "SELECT * FROM `auth` WHERE `username` = '" . $user_esc . "' AND `password` = '" . $conn->real_escape_string($md) . "' LIMIT 1";
+        $result = $conn->query($query);
+        if ($result && $result->num_rows == 1) {
+            return $result->fetch_assoc();
+        }
+
+        return false;
     }
 
     public function __construct($username)

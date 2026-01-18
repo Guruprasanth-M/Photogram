@@ -1,15 +1,32 @@
 <?php
 
-$username = $_POST['email_address'];
-$password = $_POST['password'];
+$username = isset($_POST['username']) ? $_POST['username'] : '';
+$password = isset($_POST['password']) ? $_POST['password'] : '';
 
-$result = validate_credentials($username, $password);
+function get_logged_username()
+{
+    $user = Session::get('session_user');
+    if ($user && isset($user['username'])) {
+        return $user['username'];
+    }
+    return null;
+}
+
+$result = false;
+if ($username !== '' && $password !== '') {
+    $userRow = User::login($username, $password);
+    if ($userRow) {
+        Session::set('is_loggedin', true);
+        Session::set('session_user', $userRow);
+        $result = $userRow;
+    }
+}
 
 if ($result) {
     ?>
 <main class="container">
     <div class="bg-light p-5 rounded mt-3">
-        <h1>Login Success</h1>
+        <h1>Login Success<?php echo isset($result['username']) ? ', ' . htmlspecialchars($result['username']) : (get_logged_username() ? ', ' . htmlspecialchars(get_logged_username()) : ''); ?></h1>
         <p class="lead">This example is a quick exercise to do basic login with html forms.</p>
     </div>
 </main>
@@ -26,10 +43,10 @@ if ($result) {
         <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
         <div class="form-floating">
-            <input name="email_address" type="email" class="form-control" id="floatingInput"
-                placeholder="name@example.com">
-            <label for="floatingInput">Email address</label>
-        </div>
+                <input name="username" type="text" class="form-control" id="floatingInput"
+                    placeholder="username">
+                <label for="floatingInput">Username</label>
+            </div>
         <div class="form-floating">
             <input name="password" type="password" class="form-control" id="floatingPassword" placeholder="Password">
             <label for="floatingPassword">Password</label>
