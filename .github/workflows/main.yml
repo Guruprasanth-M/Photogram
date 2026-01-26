@@ -26,3 +26,6 @@ jobs:
           rm -rf /home/azureuser/htdocs/photogram/.git
 
           echo "Application successfully deployed."
+
+          cp /home/azureuser/photogramconfig.json /home/azureuser/htdocs/photogram/project/
+
