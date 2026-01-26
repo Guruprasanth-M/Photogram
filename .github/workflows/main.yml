@@ -15,12 +15,13 @@ jobs:
 
       - name: Deploy application
         run: |
+          pwd
           echo "Deploying application..."
 
           rm -rf /home/azureuser/htdocs/photogram
           mkdir -p /home/azureuser/htdocs/photogram
 
-          cp -r /home/azureuser/actions-runner/_work/__photogram/__photogram/* \
+          cp -r $(pwd)* \
                 /home/azureuser/htdocs/photogram/
 
           rm -rf /home/azureuser/htdocs/photogram/.git
