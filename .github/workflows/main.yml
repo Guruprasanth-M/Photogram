@@ -27,6 +27,7 @@ jobs:
           rm -rf /home/azureuser/htdocs/photogram/htdocs/.gitignore
           rm -rf /home/azureuser/htdocs/photogram/README.md
           rm -rf /home/azureuser/htdocs/photogram/htdocs/.gitattributes
+          rm -rf /home/azureuser/htdocs/photogram/project/sampleconfig.json
           cp /home/azureuser/photogramconfig.json /home/azureuser/htdocs/photogram/project/
 
           echo "Application successfully deployed."
