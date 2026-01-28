@@ -24,9 +24,10 @@ if (!$login) {
     } else {
         ?>
 <main class="container">
-	<div class="bg-light p-5 rounded mt-3">
-		<h1>Login Failed</h1>
-		<p class="lead">This example is a quick exercise to do basic login with html forms.</p>
+	<div class="border border-danger p-5 rounded mt-3 text-center">
+		<h1 class="text-danger">Login Failed</h1>
+		<p class="lead">Invalid username/email or password. Please try again.</p>
+        <a href="<?=get_config('base_path')?>login.php" class="btn btn-secondary">Try Again</a>
 	</div>
 </main>
 <?php
@@ -35,8 +36,8 @@ if (!$login) {
     ?>
 	<?php if (isset($_GET['signup']) && $_GET['signup'] == 'success') { ?>
 		<main class="container">
-			<div class="bg-light p-5 rounded mt-3">
-				<h1>Signup Success</h1>
+			<div class="border border-success p-5 rounded mt-3 text-center">
+				<h1 class="text-success">Signup Success</h1>
 				<p class="lead">Registration successful! Please login with your credentials below.</p>
 			</div>
 		</main>
@@ -45,27 +46,26 @@ if (!$login) {
 
 <main class="form-signin">
 	<form method="post" action="<?=get_config('base_path')?>login.php">
-		<img class="mb-4" src="https://git.selfmade.ninja/uploads/-/system/appearance/logo/1/Logo_Dark.png" alt=""
+		<img class="mb-4 d-block mx-auto" src="https://git.selfmade.ninja/uploads/-/system/appearance/logo/1/Logo_Dark.png" alt=""
 			height="50">
 		<input name="fingerprint" type="hidden" id="fingerprint" value="">
-		<h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+		<h1 class="h3 mb-3 fw-normal">Login</h1>
 
-		<div class="form-floating">
+		<div class="form-floating mb-3">
 			<input name="email_address" type="text" class="form-control" id="floatingInput"
 				placeholder="name@example.com">
-			<label for="floatingInput">Email address or Username</label>
+			<label for="floatingInput">Username or Email</label>
 		</div>
-		<div class="form-floating">
+		<div class="form-floating mb-3">
 			<input name="password" type="password" class="form-control" id="floatingPassword" placeholder="Password">
 			<label for="floatingPassword">Password</label>
 		</div>
 
-		<div class="checkbox mb-3">
-			<label>
-				<input type="checkbox" value="remember-me"> Remember me
-			</label>
-		</div>
-		<button class="w-100 btn btn-lg btn-primary hvr-grow-rotate" type="submit">Sign in</button>
+		<button class="w-100 btn btn-lg btn-primary mb-3" type="submit">Sign in</button>
+        <div class="text-center">
+            <span class="text-muted">Not a member?</span> 
+            <a href="<?=get_config('base_path')?>signup.php" class="btn btn-link p-0">Register Now</a>
+        </div>
 	</form>
 </main>
 
