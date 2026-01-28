@@ -7,26 +7,24 @@ class UserSession
      *
      * @return SessionID
      */
-    public static function authenticate($user, $pass, $fingerprint = null)
+    public static function authenticate($user, $pass)
     {
-        $loginResult = User::login($user, $pass);
-        if ($loginResult) {
-            // login() returns array or username string; extract username
-            if (is_array($loginResult) && isset($loginResult['username'])) {
-                $username = $loginResult['username'];
-            } else {
-                $username = $loginResult;
-            }
+        $username = User::login($user, $pass);
+        if ($username) {
             $userObj = new User($username);
             $conn = Database::getConnection();
             $ip = $_SERVER['REMOTE_ADDR'];
             $agent = $_SERVER['HTTP_USER_AGENT'];
+            $fingerprint = isset($_POST['fingerprint']) ? $_POST['fingerprint'] : (isset($_SESSION['fingerprint']) ? $_SESSION['fingerprint'] : null);
+            
             if (empty($fingerprint)) {
-                error_log("UserSession::authenticate - Warning: fingerprint is empty for user $username");
+                error_log("UserSession::authenticate - Warning: fingerprint is empty for user " . $userObj->getUsername());
             }
+            
             $token = md5(rand(0, 9999999) . $ip . $agent . time());
             $sql = "INSERT INTO `session` (`uid`, `token`, `login_time`, `ip`, `user_agent`, `active`, `fingerprint`)
-            VALUES ('" . $userObj->id . "', '" . $conn->real_escape_string($token) . "', now(), '" . $conn->real_escape_string($ip) . "', '" . $conn->real_escape_string($agent) . "', '1', '" . $conn->real_escape_string($fingerprint) . "')";
+            VALUES ('$userObj->id', '$token', now(), '$ip', '$agent', '1', '$fingerprint')";
+
             if ($conn->query($sql)) {
                 self::deleteExpired(); // Clean up old sessions
                 Session::set('session_token', $token);
@@ -59,7 +57,8 @@ class UserSession
                     if ($_SERVER['REMOTE_ADDR'] == $session->getIP()) {
                         if ($_SERVER['HTTP_USER_AGENT'] == $session->getUserAgent()) {
                              if ($session->getFingerprint() == Session::get('fingerprint')){
-                                return true;
+                                Session::$user = $session->getUser();
+                                return $session;
                             } else throw new Exception("FingerPrint doesn't match");
                         } else throw new Exception("User agent does't match");
                     } else throw new Exception("IP does't match");
