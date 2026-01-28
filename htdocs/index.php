@@ -2,26 +2,19 @@
 
 include 'libs/load.php';
 
-?>
+if (isset($_GET['logout'])) {
+    if (Session::isset("session_token")) {
+        $Session = new UserSession(Session::get("session_token"));
+        if ($Session->removeSession()) {
+            echo "<h3> Pervious Session is removing from db </h3>";
+        } else {
+            echo "<h3>Pervious Session not removing from db </h3>";
+        }
+    }
+    Session::destroy();
+    header("Location: /");
+    die();
+} else {
+    Session::renderPage();
+}
 
-<!doctype html>
-<html lang="en">
-<?load_template('_head');?>
-
-<body>
-
-    <?load_template('_header');?>
-    <main>
-
-        <?load_template('_calltoaction');?>
-
-        <?load_template('_photogram');?>
-
-    </main>
-    <?load_template('_footer');?>
-    <script src="<?=get_config('base_path')?>assets/dist/js/bootstrap.bundle.min.js"></script>
-
-
-</body>
-
-</html>
