@@ -23,7 +23,7 @@ if ($signup && $error === true) {
 
 <main class="form-signup">
 	<form method="post" action="<?=get_config('base_path')?>signup.php">
-		<img class="mb-4 d-block mx-auto" src="https://git.selfmade.ninja/uploads/-/system/appearance/logo/1/Logo_Dark.png" alt=""
+		<img class="mb-4 d-block mx-auto" src="https://i.pinimg.com/1200x/10/51/de/1051de3d7deb29319e7905bdf5191610.jpg" alt=""
 			height="60">
 		<h1 class="h3 mb-4 fw-normal text-center">Join Photogram</h1>
 

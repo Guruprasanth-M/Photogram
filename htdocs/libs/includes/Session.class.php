@@ -19,9 +19,6 @@ class Session
     public static function destroy()
     {
         session_destroy();
-        /*
-        If UserSession is active, set it to inactive.
-        */
     }
 
     public static function set($key, $value)
@@ -60,12 +57,11 @@ class Session
 
     public static function loadTemplate($name)
     {
-        $name = str_replace('/htdocs/', '', $name); // Clean up if someone passed /htdocs/
+        $name = str_replace('/htdocs/', '', $name); 
         $script = dirname(__DIR__, 2) . "/_templates/$name.php";
         if (is_file($script)) {
             include $script;
         } else {
-            // Avoid infinite loops if _error is missing
             if ($name !== '_error') {
                 Session::loadTemplate('_error');
             }

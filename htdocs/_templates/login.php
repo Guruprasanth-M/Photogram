@@ -29,7 +29,7 @@ if (!$login && !($result && Session::$usersession)) {
 
 <main class="form-signin">
 	<form method="post" action="<?=get_config('base_path')?>login.php">
-		<img class="mb-4 d-block mx-auto" src="https://git.selfmade.ninja/uploads/-/system/appearance/logo/1/Logo_Dark.png" alt=""
+		<img class="mb-4 d-block mx-auto" src="https://i.pinimg.com/1200x/35/11/40/3511407df15923bbc85720e712cec44e.jpg" alt=""
 			height="60">
 		<input name="fingerprint" type="hidden" id="fingerprint" value="">
 		
