@@ -13,13 +13,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
         if ($_POST['action'] === 'save') {
             try {
-                $user->setFirstname($_POST['firstname'] ?? '');
-                $user->setLastname($_POST['lastname'] ?? '');
-                $user->setBio($_POST['bio'] ?? '');
-                $user->setAvatar($_POST['avatar'] ?? '');
-                $user->setInstagram($_POST['instagram'] ?? '');
-                $user->setTwitter($_POST['twitter'] ?? '');
-                $user->setFacebook($_POST['facebook'] ?? '');
+                $fields = ['firstname', 'lastname', 'bio', 'avatar', 'instagram', 'twitter', 'facebook'];
+                foreach ($fields as $field) {
+                    $setter = 'set' . ucfirst($field);
+                    $user->$setter($_POST[$field] ?? '');
+                }
                 
                 if (!empty($_POST['dob'])) {
                     $parts = explode('-', $_POST['dob']);
@@ -35,13 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         } elseif ($_POST['action'] === 'clear') {
             try {
-                $user->setFirstname('');
-                $user->setLastname('');
-                $user->setBio('');
-                $user->setAvatar('');
-                $user->setInstagram('');
-                $user->setTwitter('');
-                $user->setFacebook('');
+                $fields = ['firstname', 'lastname', 'bio', 'avatar', 'instagram', 'twitter', 'facebook'];
+                foreach ($fields as $field) {
+                    $setter = 'set' . ucfirst($field);
+                    $user->$setter('');
+                }
                 $message = "Profile cleared!";
             } catch (Exception $e) {
                 $message = "Clear failed: " . $e->getMessage();
