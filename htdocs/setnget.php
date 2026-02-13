@@ -1,11 +1,8 @@
 <?php
 include 'libs/load.php';
 
-// New Style authentication check
-if (!Session::isAuthenticated()) {
-    header("Location: " . get_config('base_path') . "login.php");
-    exit();
-}
+// New Style authentication check - saves redirect URL automatically
+Session::ensureLogin();
 
 $user = Session::getUser();
 $message = '';

@@ -14,9 +14,12 @@ if (isset($_POST['email_address']) and isset($_POST['password'])) {
 }
 
 if (!$login && $result && Session::$usersession) {
+    // Check for redirect URL from ensureLogin()
+    $redirect_url = Session::get('_redirect', get_config('base_path'));
+    Session::delete('_redirect');
     ?>
     <script>
-        window.location.href = "<?=get_config('base_path')?>"
+        window.location.href = "<?=$redirect_url?>"
     </script>
     <?php
     exit();
