@@ -1,10 +1,12 @@
 <?php
 
+include_once 'traits/SQLGetterSetter.trait.php';
 include_once 'includes/Session.class.php';
 include_once 'includes/User.class.php';
 include_once 'includes/Database.class.php';
 include_once 'includes/UserSession.class.php';
 include_once 'includes/WebAPI.class.php';
+include_once 'app/post.class.php';
 
 global $__site_config;
 
