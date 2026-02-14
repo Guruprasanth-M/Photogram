@@ -15,8 +15,11 @@ class Post
             
             if (move_uploaded_file($image_tmp, $image_path)) {
                 $image_uri = "/images/$image_name";
-                $insert_command = "INSERT INTO `posts` (`post_text`, `multiple_images`, `image_uri`, `like_count`, `uploaded_time`, `owner`) VALUES ('$text', 0, '$image_uri', '0', now(), '$author')";
                 $db = Database::getConnection();
+                $text_safe = $db->real_escape_string($text);
+                $author_safe = $db->real_escape_string($author);
+                $image_uri_safe = $db->real_escape_string($image_uri);
+                $insert_command = "INSERT INTO `posts` (`post_text`, `mulit_image`, `image_uri`, `like_count`, `upload_time`, `owner`) VALUES ('$text_safe', '0', '$image_uri_safe', 0, NOW(), '$author_safe')";
                 
                 if ($db->query($insert_command)) {
                     $id = mysqli_insert_id($db);
