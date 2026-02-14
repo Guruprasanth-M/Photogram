@@ -1,2 +1,10 @@
 ErrorDocument 404 /error.php
 ErrorDocument 500 "<H1>Some error, contact administrator</H1>"
+
+RewriteEngine On
+RewriteBase /
+
+RewriteRule ^/?files/([^/]+)?$ files.php?name=$1 [L,QSA,NC]
+
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^([^/.]+)$ $1.php [L]
