@@ -21,12 +21,6 @@ if (isset($_GET['upload'])) {
 	<div class="row py-lg-5">
 		<form method="post" action="<?=get_config('base_path')?>" enctype="multipart/form-data">
 			<div class="col-lg-6 col-md-8 mx-auto">
-				<?php if ($message): ?>
-					<div class="alert alert-<?=$message_type?> alert-dismissible fade show" role="alert">
-						<?=htmlspecialchars($message)?>
-						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-					</div>
-				<?php endif; ?>
 				<h1 id="greeting" class="fw-light">What are you upto,
 					<?=Session::getUser()->getUsername()?>?
 				</h1>
@@ -46,3 +40,29 @@ if (isset($_GET['upload'])) {
 		</form>
 	</div>
 </section>
+
+<?php if ($message): ?>
+<div class="modal fade" id="uploadResultModal" tabindex="-1" aria-labelledby="uploadResultModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header border-0">
+				<h5 class="modal-title" id="uploadResultModalLabel">
+					<?= $message_type === 'success' ? '&#10004; Success' : '&#10060; Error' ?>
+				</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body text-center py-4">
+				<p class="mb-0 fs-5"><?=htmlspecialchars($message)?></p>
+			</div>
+			<div class="modal-footer border-0 justify-content-center">
+				<a href="<?=get_config('base_path')?>" class="btn btn-<?= $message_type === 'success' ? 'success' : 'danger' ?>">OK</a>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		new bootstrap.Modal(document.getElementById('uploadResultModal')).show();
+	});
+</script>
+<?php endif; ?>
