@@ -86,6 +86,19 @@ class Session
         } 
         return false;
     }
+    public static function isOwnerOf($owner)
+    {
+        $sess_user = Session::getUser();
+        if($sess_user){
+            if($sess_user->getEmail() == $owner){
+                return true;
+            }else{
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 
     public static function ensureLogin(){
         if(!Session::isAuthenticated()){

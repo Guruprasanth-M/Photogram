@@ -1,4 +1,6 @@
 <?php
+// Load Composer autoloader for Carbon and other dependencies
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 include_once 'traits/SQLGetterSetter.trait.php';
 include_once 'includes/Session.class.php';
