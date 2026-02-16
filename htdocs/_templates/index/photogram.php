@@ -1,7 +1,7 @@
 <div class="album py-5 bg-light">
 	<div class="container">
 
-		<div class="row" data-masonry='{"percentPosition": true }'>
+		<div class="row" id="masonry-grid">
 			<?php
                 $posts = Post::getAllPosts();
 				use Carbon\Carbon;
