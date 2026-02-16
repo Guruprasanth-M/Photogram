@@ -1,0 +1,27 @@
+{
+  "name": "photogram-build",
+  "version": "1.0.0",
+  "description": "Photogram build automation - CSS/JS concat, minify, obfuscate & watch",
+  "private": true,
+  "scripts": {
+    "clean": "node build.js --clean",
+    "concat:css": "node build.js --concat-css",
+    "concat:js": "node build.js --concat-js",
+    "concat": "node build.js --concat-css --concat-js",
+    "minify:css": "node build.js --concat-css --minify-css",
+    "minify:js": "node build.js --concat-js --minify-js",
+    "obfuscate": "node build.js --concat-js --obfuscate",
+    "build:css": "node build.js --concat-css --minify-css",
+    "build:js": "node build.js --concat-js --minify-js --obfuscate",
+    "build": "node build.js --all",
+    "watch": "node build.js --watch",
+    "dev": "node build.js --all --watch"
+  },
+  "devDependencies": {
+    "clean-css": "^5.3.3",
+    "terser": "^5.31.0",
+    "javascript-obfuscator": "^4.1.1",
+    "chokidar": "^3.6.0",
+    "glob": "^10.3.10"
+  }
+}

@@ -4,6 +4,8 @@
 
 <body>
 
+	<div class="pg-bg"></div>
+
 	<?php Session::loadTemplate('_header'); ?>
 	<main>
 		<?php
@@ -18,19 +20,7 @@
 	<script
 		src="<?=get_config('base_path')?>assets/dist/js/bootstrap.bundle.min.js">
 	</script>
-	<script>
-	$(document).ready(function() {
-		var grid = document.getElementById('masonry-grid');
-		if (grid) {
-			imagesLoaded(grid, function() {
-				new Masonry(grid, {
-					itemSelector: '.col-lg-4',
-					percentPosition: true
-				});
-			});
-		}
-	});
-	</script>
+	<script src="<?=get_config('base_path')?>js/app.min.js"></script>
 
 </body>
 

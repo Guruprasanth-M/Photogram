@@ -72,8 +72,8 @@ $displayName = ($user && $user->getFirstname()) ? $user->getFirstname() . ' ' . 
                         <?}?>
 					</button>
 				<?} else {?>
-					<a href="<?=get_config('base_path')?>login.php" class="btn btn-link text-white fw-bold me-2">Login</a>
-					<a href="<?=get_config('base_path')?>signup.php" class="btn btn-primary btn-sm px-3">Join</a>
+					<a href="<?=get_config('base_path')?>login.php" class="btn btn-link text-white fw-semibold me-2" style="text-decoration: none; font-size: 0.95rem;">Log in</a>
+					<a href="<?=get_config('base_path')?>signup.php" class="btn btn-primary btn-sm px-4" style="border-radius: 20px;">Sign up</a>
 				<?}?>
 			</div>
 		</div>
