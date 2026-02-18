@@ -29,7 +29,7 @@ class Post
             $db = Database::getConnection();
             $text_safe = $db->real_escape_string($text);
             $author_safe = $db->real_escape_string($author);
-            $image_uri = get_config('base_path') . 'uploads/' . $image_name;
+            $image_uri = 'uploads/' . $image_name;
             $image_uri_safe = $db->real_escape_string($image_uri);
             
             $insert_command = "INSERT INTO posts (post_text, mulit_image, image_uri, like_count, upload_time, owner) VALUES ('$text_safe', '0', '$image_uri_safe', 0, NOW(), '$author_safe')";
@@ -49,6 +49,14 @@ class Post
     {
         $db = Database::getConnection();
         $sql = "SELECT * FROM `posts` ORDER BY `upload_time` DESC";
+        $result = $db->query($sql);
+        return iterator_to_array($result);
+    }
+
+    public static function countAllPosts()
+    {
+        $db = Database::getConnection();
+        $sql = "SELECT COUNT(*) as count FROM `posts` ORDER BY `upload_time` DESC";
         $result = $db->query($sql);
         return iterator_to_array($result);
     }

@@ -7,6 +7,227 @@
             "label": "Error log",
             "type": "shell",
             "command": "tail -f /var/log/apache2/error.log"
+        },
+        {
+            "label": "npm: build",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "build"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/project/npm-scripts"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "npm: build:css",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "build:css"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/project/npm-scripts"
+            }
+        },
+        {
+            "label": "npm: build:js",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "build:js"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/project/npm-scripts"
+            }
+        },
+        {
+            "label": "npm: dev (watch + build)",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "dev"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/project/npm-scripts"
+            },
+            "isBackground": true,
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^.*$",
+                    "file": 1,
+                    "location": 2,
+                    "message": 3
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^.*Photogram Build.*",
+                    "endsPattern": "^.*done in.*"
+                }
+            }
+        },
+        {
+            "label": "npm: watch",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "watch"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/project/npm-scripts"
+            },
+            "isBackground": true
+        },
+        {
+            "label": "npm: clean",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "clean"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/project/npm-scripts"
+            }
+        },
+        {
+            "label": "npm: check (lint)",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "check"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/project/npm-scripts"
+            },
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^\\s+(error|ok)\\s+(.*)$",
+                    "severity": 1,
+                    "file": 2
+                }
+            }
+        },
+        {
+            "label": "npm: check:php",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "check:php"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/project/npm-scripts"
+            }
+        },
+        {
+            "label": "npm: check:js",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "check:js"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/project/npm-scripts"
+            }
+        },
+        {
+            "label": "npm: create:css",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "create:css",
+                "--",
+                "${input:filename}"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/project/npm-scripts"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "npm: create:js",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "create:js",
+                "--",
+                "${input:filename}"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/project/npm-scripts"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "npm: serve",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "serve"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/project/npm-scripts"
+            },
+            "isBackground": true,
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^\\[(.*?)\\].*",
+                    "line": 1
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^.*Development Server.*started",
+                    "endsPattern": "^.*server stopped"
+                }
+            }
+        },
+        {
+            "label": "npm: stats",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "stats"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/project/npm-scripts"
+            }
+        },
+        {
+            "label": "npm: help",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "help"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/project/npm-scripts"
+            },
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "filename",
+            "type": "promptString",
+            "description": "Enter filename (without extension):"
         }
     ]
 }

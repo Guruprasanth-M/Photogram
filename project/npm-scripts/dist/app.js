@@ -1,4 +1,4 @@
-/*! Photogram build 16/2/2026 17:04 */
+/*! Photogram build 18/2/2026 7:06 */
 /**
  * Photogram – Masonry Grid Initializer
  * Initializes Masonry layout on the photo grid and re-lays out
@@ -64,41 +64,57 @@ $(document).ready(function () {
 $(document).ready(function () {
     'use strict';
 
-    // ── Like / Unlike handler ────────────────────────────
+    // ── Like / Unlike handler (uses API) ─────────────────
     $(document).on('click', '.btn-like', function (e) {
         e.preventDefault();
         var $btn = $(this);
-        var postId = $btn.data('post-id');
+        var postId = $btn.parent().attr('data-id');
         if (!postId) return;
 
-        $.post('setnget.php', { action: 'like', post_id: postId }, function (res) {
-            if (res && res.success) {
+        $.post(window.__BASE_PATH + 'api/posts/like', { id: postId }, function (data) {
+            if (data && data.message === 'success') {
                 $btn.toggleClass('liked');
             }
         }, 'json');
     });
 
-    // ── Delete post handler ──────────────────────────────
+    // ── Delete post handler (uses Dialog + API) ─────────
     $(document).on('click', '.btn-delete', function (e) {
         e.preventDefault();
-        if (!confirm('Delete this memory?')) return;
-        var $btn = $(this);
-        var postId = $btn.data('post-id');
-        if (!postId) return;
-
-        $.post('setnget.php', { action: 'delete', post_id: postId }, function (res) {
-            if (res && res.success) {
-                $btn.closest('.col-lg-4').fadeOut(300, function () {
-                    $(this).remove();
-                    // Trigger masonry re-layout
-                    var grid = document.getElementById('masonry-grid');
-                    if (grid && typeof Masonry !== 'undefined') {
-                        var msnry = Masonry.data(grid);
-                        if (msnry) msnry.layout();
-                    }
-                });
+        var post_id = $(this).parent().attr('data-id');
+        var d = new Dialog("Delete Post", "Are you sure you want to remove this post?");
+        d.setButtons([
+            {
+                'name': "Delete",
+                'class': "btn-danger",
+                'onClick': function (event) {
+                    $.post(window.__BASE_PATH + 'api/posts/delete', {
+                        id: post_id
+                    }, function (data, textSuccess) {
+                        if (textSuccess === "success") {
+                            $('#post-' + post_id).fadeOut(300, function () {
+                                $(this).remove();
+                                // Trigger masonry re-layout
+                                var grid = document.getElementById('masonry-grid');
+                                if (grid && typeof Masonry !== 'undefined') {
+                                    var msnry = Masonry.data(grid);
+                                    if (msnry) msnry.layout();
+                                }
+                            });
+                        }
+                    });
+                    $(event.data.modal).modal('hide');
+                }
+            },
+            {
+                'name': "Cancel",
+                'class': "btn-secondary",
+                'onClick': function (event) {
+                    $(event.data.modal).modal('hide');
+                }
             }
-        }, 'json');
+        ]);
+        d.show();
     });
 
     // ── Share handler (Web Share API) ────────────────────

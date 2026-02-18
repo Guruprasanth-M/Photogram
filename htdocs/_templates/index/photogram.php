@@ -28,22 +28,23 @@
 						$uploaded_time = Carbon::parse($p->getUploadTime());
 						$uploaded_time_str = $uploaded_time->diffForHumans();
 						?>
-						<div class="col-lg-4 mb-4">
+						<div class="col-lg-4 mb-4"
+							id="post-<?=$post['id']?>">
 							<div class="card">
 								<div class="card-img-wrapper">
-									<img class="bd-placeholder-img card-img-top" src="<?=$p->getImageUri()?>" alt="<?=htmlspecialchars($p->getPostText())?>">
+									<img class="bd-placeholder-img card-img-top" src="<?=get_config('base_path') . ltrim($p->getImageUri(), '/')?>" alt="<?=htmlspecialchars($p->getPostText())?>">
 								</div>
 								<div class="card-body">
 									<p class="card-text"><?=htmlspecialchars($p->getPostText())?></p>
 									<div class="d-flex justify-content-between align-items-center">
-										<div class="btn-group">
-											<button type="button" class="btn btn-sm btn-outline-primary">Like</button>
-											<button type="button" class="btn btn-sm btn-outline-success">Share</button>
+										<div class="btn-group"
+											data-id="<?=$post['id']?>">
+											<button type="button" class="btn btn-sm btn-outline-primary btn-like">Like</button>
+											<!-- <button type="button" class="btn btn-sm btn-outline-success">Share</button> -->
 											<?php
-											$user = Session::getUser();
 											if (Session::isOwnerOf($p->getOwner())) {
 											?>
-											<button type="button" class="btn btn-sm btn-outline-danger">Delete</button>
+											<button type="button" class="btn btn-sm btn-outline-danger btn-delete">Delete</button>
 											<?}?>
 										</div>
 										<small class="text-muted"><?=$uploaded_time_str?></small>
