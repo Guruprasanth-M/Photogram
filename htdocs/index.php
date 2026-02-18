@@ -31,7 +31,18 @@ if (isset($_GET['logout'])) {
                 throw new Exception("Please add some text to your post");
             }
             if ($_FILES['post_image']['error'] !== UPLOAD_ERR_OK) {
-                throw new Exception("Please select an image to upload");
+                $upload_errors = [
+                    UPLOAD_ERR_INI_SIZE   => 'File too large (server limit: ' . ini_get('upload_max_filesize') . ')',
+                    UPLOAD_ERR_FORM_SIZE  => 'File too large (form limit exceeded)',
+                    UPLOAD_ERR_PARTIAL    => 'File was only partially uploaded',
+                    UPLOAD_ERR_NO_FILE    => 'No file was selected',
+                    UPLOAD_ERR_NO_TMP_DIR => 'Server error: missing temp folder',
+                    UPLOAD_ERR_CANT_WRITE => 'Server error: failed to write file',
+                    UPLOAD_ERR_EXTENSION  => 'Upload blocked by a PHP extension',
+                ];
+                $err_code = $_FILES['post_image']['error'];
+                $err_msg = $upload_errors[$err_code] ?? 'Unknown upload error (code: ' . $err_code . ')';
+                throw new Exception($err_msg);
             }
             if (!is_file($image_tmp)) {
                 throw new Exception("Image file not found");

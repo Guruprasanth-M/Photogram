@@ -7,6 +7,11 @@
 ErrorDocument 404 /error.php
 ErrorDocument 500 "<H1>Some error, contact administrator</H1>"
 
+# Upload limits
+php_value upload_max_filesize 50M
+php_value post_max_size 55M
+php_value max_execution_time 120
+
 RewriteEngine On
 RewriteBase /
 
