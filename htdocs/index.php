@@ -40,13 +40,19 @@ if (isset($_GET['logout'])) {
             $post = Post::registerPost($text, $image_tmp);
             
             if ($post) {
+                // TODO: Remove dynamic base_path detection check once development is done
+                //       This ensures redirect works on both domain and IP-based access
                 header("Location: " . get_config('base_path') . "?upload=success");
                 die();
             }
         } catch (Exception $e) {
             // Store error in session so it survives the redirect
             Session::set('upload_error', $e->getMessage());
-            header("Location: " . get_config('base_path') . "?upload=error");
+            // TODO: Remove dynamic base_path detection check once development is done
+            //       This ensures redirect works on both domain and IP-based access
+            $redirect_url = get_config('base_path') . "?upload=error";
+            error_log("Upload error redirect: " . $redirect_url . " | Error: " . $e->getMessage());
+            header("Location: " . $redirect_url);
             die();
         }
     }

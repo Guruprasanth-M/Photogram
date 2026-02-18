@@ -16,3 +16,41 @@
 		</form>
 	</div>
 </section>
+
+<?php
+// Handle upload result from query params (set by PRG redirect in index.php)
+$upload_status = $_GET['upload'] ?? null;
+if ($upload_status === 'success') {
+	$msg_title = '✔ Success';
+	$msg_text = 'Your photo has been shared successfully!';
+	$msg_type = 'success';
+} elseif ($upload_status === 'error') {
+	$msg_title = '✘ Error';
+	$msg_text = Session::get('upload_error', 'Upload failed. Please try again.');
+	Session::delete('upload_error');
+	$msg_type = 'danger';
+}
+
+if ($upload_status) {
+?>
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		var d = new Dialog(
+			<?= json_encode($msg_title) ?>,
+			<?= json_encode($msg_text) ?>
+		);
+		d.setButtons([
+			{
+				'name': 'OK',
+				'class': 'btn-<?= $msg_type ?>',
+				'onClick': function(event) {
+					$(event.data.modal).modal('hide');
+					// Clean URL by removing upload params
+					window.history.replaceState({}, document.title, window.__BASE_PATH);
+				}
+			}
+		]);
+		d.show(<?= json_encode($msg_type) ?>);
+	});
+</script>
+<?php } ?>
