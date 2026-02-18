@@ -2,6 +2,10 @@
 
 include 'libs/load.php';
 
+// TODO: Modify URL logic and API calls for production server
+//       The server may not have a domain, so it must work without one
+// TODO: Database table creation should be implemented in code (similar to API setup)
+// TODO: Create Docker and docker-compose files
 if (isset($_GET['logout'])) {
     if (Session::isset("session_token")) {
         try {
