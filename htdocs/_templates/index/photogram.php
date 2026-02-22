@@ -32,6 +32,13 @@
 							$like = new Like($p);
 							$isLiked = $like->isLiked();
 						}
+						// Resolve post author username from owner email
+						$ownerEmail = $p->getOwner();
+						$authorName = $ownerEmail;
+						try {
+							$authorUser = new User($ownerEmail);
+							$authorName = $authorUser->getUsername();
+						} catch (Exception $e) {}
 						?>
 						<div class="col-lg-4 mb-4"
 							id="post-<?=$post['id']?>">
@@ -40,12 +47,15 @@
 									<img class="bd-placeholder-img card-img-top" src="<?=get_config('base_path') . ltrim($p->getImageUri(), '/')?>" alt="<?=htmlspecialchars($p->getPostText())?>">
 								</div>
 								<div class="card-body">
+									<div class="post-author">
+										<div class="post-author-avatar"><?=strtoupper(substr($authorName, 0, 1))?></div>
+										<span class="post-author-name">@<?=htmlspecialchars($authorName)?></span>
+									</div>
 									<p class="card-text"><?=htmlspecialchars($p->getPostText())?></p>
 									<div class="d-flex justify-content-between align-items-center">
 										<div class="btn-group"
 											data-id="<?=$post['id']?>">
 											<button type="button" class="btn btn-sm <?=$isLiked ? 'btn-primary liked' : 'btn-outline-primary'?> btn-like"><?=$isLiked ? 'Liked' : 'Like'?></button>
-											<!-- <button type="button" class="btn btn-sm btn-outline-success">Share</button> -->
 											<?php
 											if (Session::isOwnerOf($p->getOwner())) {
 											?>

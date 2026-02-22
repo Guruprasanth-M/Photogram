@@ -1,4 +1,4 @@
-/*! Photogram build 22/2/2026 10:29 */
+/*! Photogram build 22/2/2026 11:43 */
 /**
  * Photogram – Masonry Grid Initializer
  * Initializes Masonry layout on the photo grid and re-lays out
@@ -76,12 +76,16 @@ $(document).ready(function () {
                 if (data.liked) {
                     $btn.removeClass('btn-outline-primary').addClass('btn-primary liked');
                     $btn.text('Liked');
+                    toast('Liked', 'just now', 'You liked this post');
                 } else {
                     $btn.removeClass('btn-primary liked').addClass('btn-outline-primary');
                     $btn.text('Like');
+                    toast('Unliked', 'just now', 'You removed your like');
                 }
             }
-        }, 'json');
+        }, 'json').fail(function() {
+            toast('Error', 'now', 'Please log in to like posts', {placement: 'top-center'});
+        });
     });
 
     // ── Delete post handler (uses Dialog + API) ─────────
@@ -98,6 +102,7 @@ $(document).ready(function () {
                         id: post_id
                     }, function (data, textSuccess) {
                         if (textSuccess === "success") {
+                            toast('Deleted', 'just now', 'Post removed successfully');
                             $('#post-' + post_id).fadeOut(300, function () {
                                 $(this).remove();
                                 // Trigger masonry re-layout

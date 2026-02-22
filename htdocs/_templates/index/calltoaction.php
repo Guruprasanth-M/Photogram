@@ -35,22 +35,14 @@ if ($upload_status) {
 ?>
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
-		var d = new Dialog(
+		toast(
 			<?= json_encode($msg_title) ?>,
-			<?= json_encode($msg_text) ?>
+			'just now',
+			<?= json_encode($msg_text) ?>,
+			{placement: 'top-center'}
 		);
-		d.setButtons([
-			{
-				'name': 'OK',
-				'class': 'btn-<?= $msg_type ?>',
-				'onClick': function(event) {
-					$(event.data.modal).modal('hide');
-					// Clean URL by removing upload params
-					window.history.replaceState({}, document.title, window.__BASE_PATH);
-				}
-			}
-		]);
-		d.show(<?= json_encode($msg_type) ?>);
+		// Clean URL by removing upload params
+		window.history.replaceState({}, document.title, window.__BASE_PATH);
 	});
 </script>
 <?php } ?>

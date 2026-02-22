@@ -33,9 +33,9 @@ class User
         }
         
         $u = $this->conn->real_escape_string($username);
-        $sql = "SELECT `id`, `username` FROM `$this->table` WHERE `username`= '$u' OR `id` = '$u' LIMIT 1";
+        $sql = "SELECT `id`, `username`, `email` FROM `$this->table` WHERE `username`= '$u' OR `id` = '$u' OR `email` = '$u' LIMIT 1";
         $result = $this->conn->query($sql);
-        if ($result->num_rows) {
+        if ($result && $result->num_rows) {
             $row = $result->fetch_assoc();
             $this->id = $row['id'];
             $this->username = $row['username'];

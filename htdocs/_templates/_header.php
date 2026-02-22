@@ -12,38 +12,78 @@ $displayName = ($user && $user->getFirstname()) ? $user->getFirstname() . ' ' . 
 			<h5 class="offcanvas-title" id="profileSidebarLabel">Account</h5>
 			<button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 		</div>
-		<div class="offcanvas-body">
-			<div class="user-info-section mb-3">
-                <?if($avatar){?>
-				    <img src="<?=$avatar?>" alt="Avatar" class="user-info-avatar">
-                <?} else {?>
-                    <div class="user-info-avatar d-flex align-items-center justify-content-center bg-secondary" style="border-style: dashed;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white-50"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                    </div>
-                <?}?>
-				<div class="user-info-details">
-					<span class="user-info-name"><?=$displayName?></span>
-					<span class="user-info-username">@<?=$user->getUsername()?></span>
+		<div class="offcanvas-body p-0">
+			<!-- Profile Card -->
+			<div class="sidebar-profile-card">
+				<div class="sidebar-avatar-wrapper">
+					<?if($avatar){?>
+						<img src="<?=$avatar?>" alt="Avatar" class="sidebar-avatar-lg">
+					<?} else {?>
+						<div class="sidebar-avatar-lg sidebar-avatar-placeholder">
+							<span><?=strtoupper(substr($user->getUsername(), 0, 1))?></span>
+						</div>
+					<?}?>
+				</div>
+				<div class="sidebar-profile-info">
+					<span class="sidebar-display-name"><?=$displayName?></span>
+					<span class="sidebar-username">@<?=$user->getUsername()?></span>
+				</div>
+				<?php
+					$bio = $user->getBio();
+					if ($bio) {
+				?>
+					<p class="sidebar-bio"><?=htmlspecialchars($bio)?></p>
+				<?php } ?>
+			</div>
+
+			<!-- Quick Stats -->
+			<div class="sidebar-stats">
+				<div class="sidebar-stat">
+					<span class="sidebar-stat-num"><?php
+						$db = Database::getConnection();
+						$email_safe = $db->real_escape_string($user->getEmail());
+						$r = $db->query("SELECT COUNT(*) as c FROM posts WHERE owner='$email_safe'");
+						echo $r ? $r->fetch_assoc()['c'] : '0';
+					?></span>
+					<span class="sidebar-stat-label">Posts</span>
+				</div>
+				<div class="sidebar-stat">
+					<span class="sidebar-stat-num"><?php
+						$uid = $user->getID();
+						$r2 = $db->query("SELECT COUNT(*) as c FROM likes WHERE user_id='$uid' AND `like`=1");
+						echo $r2 ? $r2->fetch_assoc()['c'] : '0';
+					?></span>
+					<span class="sidebar-stat-label">Liked</span>
 				</div>
 			</div>
 
-			<div class="sidebar-separator"></div>
+			<!-- Navigation -->
+			<div class="sidebar-nav">
+				<span class="sidebar-nav-section">Navigate</span>
+				<a href="<?=get_config('base_path')?>" class="sidebar-link">
+					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+					<span>Feed</span>
+					<svg class="sidebar-link-arrow" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+				</a>
+				<a href="<?=get_config('base_path')?>setnget.php" class="sidebar-link">
+					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+					<span>Your Profile</span>
+					<svg class="sidebar-link-arrow" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+				</a>
+				<a href="<?=get_config('base_path')?>settings.php" class="sidebar-link">
+					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+					<span>Settings</span>
+					<svg class="sidebar-link-arrow" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+				</a>
+			</div>
 
-			<a href="<?=get_config('base_path')?>setnget.php" class="sidebar-link">
-				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-				Your Profile
-			</a>
-			<a href="<?=get_config('base_path')?>" class="sidebar-link">
-				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-				Feed
-			</a>
-
-			<div class="sidebar-separator"></div>
-
-			<a href="<?=get_config('base_path')?>?logout" class="sidebar-link text-danger">
-				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-				Sign out
-			</a>
+			<!-- Sign Out -->
+			<div class="sidebar-footer">
+				<a href="<?=get_config('base_path')?>?logout" class="sidebar-signout">
+					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+					Sign out
+				</a>
+			</div>
 		</div>
 	</div>
 	<?}?>

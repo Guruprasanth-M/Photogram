@@ -548,66 +548,146 @@ footer a:hover {
 
 /* ---------- SIDEBAR ---------- */
 .offcanvas {
-    background: rgba(28, 28, 30, 0.65) !important;
+    background: rgba(20, 20, 22, 0.85) !important;
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border-left: var(--glass-border);
     color: var(--text-main);
-    width: 300px !important;
+    width: 320px !important;
 }
 
 .offcanvas-header {
     border-bottom: 1px solid var(--border-color);
-    padding: 1.5rem;
+    padding: 1.25rem 1.5rem;
 }
 
 .offcanvas-body {
-    padding: 1rem 0;
-}
-
-.user-info-section {
-    padding: 1rem 1.5rem;
+    padding: 0;
     display: flex;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column;
+    height: 100%;
 }
 
-.user-info-avatar {
-    width: 48px;
-    height: 48px;
+/* Sidebar Profile Card */
+.sidebar-profile-card {
+    padding: 1.75rem 1.5rem 1.25rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-avatar-wrapper {
+    margin-bottom: 0.75rem;
+}
+
+.sidebar-avatar-lg {
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid var(--border-color);
+    border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
-.user-info-details {
-    line-height: 1.2;
+.sidebar-avatar-placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--accent-green) 0%, #28a745 100%);
+    border: none;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #000;
 }
 
-.user-info-name {
-    font-weight: 600;
-    color: var(--text-main);
-    display: block;
+.sidebar-profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
-.user-info-username {
-    font-size: 0.9rem;
+.sidebar-display-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #fff;
+}
+
+.sidebar-username {
+    font-size: 0.85rem;
     color: var(--text-muted);
+}
+
+.sidebar-bio {
+    margin: 0.75rem 0 0;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* Sidebar Stats */
+.sidebar-stats {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-stat {
+    flex: 1;
+    text-align: center;
+    padding: 0.85rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sidebar-stat + .sidebar-stat {
+    border-left: 1px solid var(--border-color);
+}
+
+.sidebar-stat-num {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.03em;
+}
+
+.sidebar-stat-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+/* Sidebar Navigation */
+.sidebar-nav {
+    padding: 0.5rem 0;
+    flex: 1;
+}
+
+.sidebar-nav-section {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    font-weight: 700;
+    padding: 0.75rem 1.5rem 0.4rem;
+    display: block;
 }
 
 .sidebar-link {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 0.75rem 1.5rem;
+    padding: 0.7rem 1.5rem;
     color: var(--text-main);
     text-decoration: none;
-    transition: background 0.2s ease;
-    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    font-size: 0.92rem;
+    font-weight: 500;
+    border-radius: 0;
+    position: relative;
 }
 
 .sidebar-link:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.06);
     color: var(--accent-green-bright);
     text-decoration: none;
 }
@@ -616,16 +696,54 @@ footer a:hover {
     width: 18px;
     height: 18px;
     color: var(--text-muted);
+    flex-shrink: 0;
 }
 
 .sidebar-link:hover svg {
     color: var(--accent-green-bright);
 }
 
-.sidebar-separator {
-    height: 1px;
-    background: var(--border-color);
-    margin: 0.5rem 0;
+.sidebar-link span {
+    flex: 1;
+}
+
+.sidebar-link-arrow {
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    transform: translateX(-4px);
+}
+
+.sidebar-link:hover .sidebar-link-arrow {
+    opacity: 0.5;
+    transform: translateX(0);
+}
+
+/* Sidebar Footer / Sign Out */
+.sidebar-footer {
+    padding: 0.75rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+    margin-top: auto;
+}
+
+.sidebar-signout {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--accent-red);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 0.5rem 0;
+    transition: all 0.2s ease;
+}
+
+.sidebar-signout:hover {
+    color: #ff6961;
+    text-decoration: none;
+}
+
+.sidebar-signout svg {
+    color: inherit;
 }
 
 .nav-avatar-btn {
@@ -712,7 +830,94 @@ html {
     scroll-behavior: smooth;
 }
 
-/* Section heading */
+/* ---------- POST AUTHOR ---------- */
+.post-author {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.post-author-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-green) 0%, #28a745 100%);
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.post-author-name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: -0.01em;
+}
+
+/* ---------- TOAST ---------- */
+.toast {
+    background: rgba(28, 28, 30, 0.9) !important;
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    color: var(--text-main);
+    font-family: var(--font-primary);
+    overflow: hidden;
+}
+
+.toast-header {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+    color: #fff !important;
+    padding: 0.65rem 1rem;
+}
+
+.toast-header strong {
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: -0.01em;
+}
+
+.toast-header .text-muted {
+    color: var(--text-muted) !important;
+    font-size: 0.72rem;
+}
+
+.toast-header .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+    opacity: 0.4;
+    font-size: 0.65rem;
+}
+
+.toast-body {
+    padding: 0.65rem 1rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.toast-container {
+    padding: 0.75rem 1rem;
+    z-index: 1040;
+    margin-top: 60px;
+}
+
+.page-load-time {
+    font-size: 0.72rem;
+    color: #fff;
+    opacity: 0.8;
+    white-space: nowrap;
+}
+
+/* ---------- SECTION LABEL ---------- */
 .section-label {
     font-size: 1.3rem;
     font-weight: 700;
