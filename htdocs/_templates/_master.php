@@ -47,6 +47,7 @@
 	<script>window.__BASE_PATH = '<?=get_config('base_path')?>';</script>
 	<script src="<?=get_config('base_path')?>js/app.min.js"></script>
 	<script src="<?=get_config('base_path')?>js/dialog.js"></script>
+	<script src="<?=get_config('base_path')?>js/toast.js"></script>
 
 </body>
 
