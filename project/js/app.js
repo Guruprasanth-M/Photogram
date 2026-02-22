@@ -13,8 +13,14 @@ $(document).ready(function () {
         if (!postId) return;
 
         $.post(window.__BASE_PATH + 'api/posts/like', { id: postId }, function (data) {
-            if (data && data.message === 'success') {
-                $btn.toggleClass('liked');
+            if (data && typeof data.liked !== 'undefined') {
+                if (data.liked) {
+                    $btn.removeClass('btn-outline-primary').addClass('btn-primary liked');
+                    $btn.text('Liked');
+                } else {
+                    $btn.removeClass('btn-primary liked').addClass('btn-outline-primary');
+                    $btn.text('Like');
+                }
             }
         }, 'json');
     });

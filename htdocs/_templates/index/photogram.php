@@ -27,6 +27,11 @@
 						$p = new Post($post['id']);
 						$uploaded_time = Carbon::parse($p->getUploadTime());
 						$uploaded_time_str = $uploaded_time->diffForHumans();
+						$isLiked = false;
+						if (Session::isAuthenticated()) {
+							$like = new Like($p);
+							$isLiked = $like->isLiked();
+						}
 						?>
 						<div class="col-lg-4 mb-4"
 							id="post-<?=$post['id']?>">
@@ -39,7 +44,7 @@
 									<div class="d-flex justify-content-between align-items-center">
 										<div class="btn-group"
 											data-id="<?=$post['id']?>">
-											<button type="button" class="btn btn-sm btn-outline-primary btn-like">Like</button>
+											<button type="button" class="btn btn-sm <?=$isLiked ? 'btn-primary liked' : 'btn-outline-primary'?> btn-like"><?=$isLiked ? 'Liked' : 'Like'?></button>
 											<!-- <button type="button" class="btn btn-sm btn-outline-success">Share</button> -->
 											<?php
 											if (Session::isOwnerOf($p->getOwner())) {

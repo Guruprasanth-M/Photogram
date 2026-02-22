@@ -1,4 +1,4 @@
-/*! Photogram build 18/2/2026 23:32 */
+/*! Photogram build 22/2/2026 10:29 */
 /**
  * Photogram – Masonry Grid Initializer
  * Initializes Masonry layout on the photo grid and re-lays out
@@ -72,8 +72,14 @@ $(document).ready(function () {
         if (!postId) return;
 
         $.post(window.__BASE_PATH + 'api/posts/like', { id: postId }, function (data) {
-            if (data && data.message === 'success') {
-                $btn.toggleClass('liked');
+            if (data && typeof data.liked !== 'undefined') {
+                if (data.liked) {
+                    $btn.removeClass('btn-outline-primary').addClass('btn-primary liked');
+                    $btn.text('Liked');
+                } else {
+                    $btn.removeClass('btn-primary liked').addClass('btn-outline-primary');
+                    $btn.text('Like');
+                }
             }
         }, 'json');
     });

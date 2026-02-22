@@ -29,7 +29,7 @@ trait SQLGetterSetter
             if (!$this->conn) {
                 $this->conn = Database::getConnection();
             }
-            $sql = "SELECT `$var` FROM `$this->table` WHERE `id` = $this->id";
+            $sql = "SELECT `$var` FROM `$this->table` WHERE `id` = '$this->id'";
             $result = $this->conn->query($sql);
             if ($result and $result->num_rows == 1) {
                 return $result->fetch_assoc()["$var"];
@@ -48,7 +48,7 @@ trait SQLGetterSetter
                 $this->conn = Database::getConnection();
             }
             $safe = $this->conn->real_escape_string($data);
-            $sql = "UPDATE `$this->table` SET `$var`='$safe' WHERE `id`=$this->id;";
+            $sql = "UPDATE `$this->table` SET `$var`='$safe' WHERE `id`='$this->id'";
             if ($this->conn->query($sql)) {
                 return true;
             } else {
@@ -66,7 +66,7 @@ trait SQLGetterSetter
         }
         try {
             //TODO: Delete the image before deleting the post entry
-            $sql = "DELETE FROM `$this->table` WHERE `id`=$this->id;";
+            $sql = "DELETE FROM `$this->table` WHERE `id`='$this->id'";
             if ($this->conn->query($sql)) {
                 return true;
             } else {
@@ -75,5 +75,10 @@ trait SQLGetterSetter
         } catch (Exception $e) {
             throw new Exception(__CLASS__ . "::delete, data unavailable.");
         }
+    }
+
+    public function getID()
+    {
+        return $this->id;
     }
 }
