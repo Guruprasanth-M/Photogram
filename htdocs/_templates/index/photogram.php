@@ -27,47 +27,13 @@
 						$p = new Post($post['id']);
 						$uploaded_time = Carbon::parse($p->getUploadTime());
 						$uploaded_time_str = $uploaded_time->diffForHumans();
-						$isLiked = false;
-						if (Session::isAuthenticated()) {
-							$like = new Like($p);
-							$isLiked = $like->isLiked();
-						}
-						// Resolve post author username from owner email
-						$ownerEmail = $p->getOwner();
-						$authorName = $ownerEmail;
-						try {
-							$authorUser = new User($ownerEmail);
-							$authorName = $authorUser->getUsername();
-						} catch (Exception $e) {}
-						?>
-						<div class="col-lg-4 mb-4"
-							id="post-<?=$post['id']?>">
-							<div class="card">
-								<div class="card-img-wrapper">
-									<img class="bd-placeholder-img card-img-top" src="<?=get_config('base_path') . ltrim($p->getImageUri(), '/')?>" alt="<?=htmlspecialchars($p->getPostText())?>">
-								</div>
-								<div class="card-body">
-									<div class="post-author">
-										<div class="post-author-avatar"><?=strtoupper(substr($authorName, 0, 1))?></div>
-										<span class="post-author-name">@<?=htmlspecialchars($authorName)?></span>
-									</div>
-									<p class="card-text"><?=htmlspecialchars($p->getPostText())?></p>
-									<div class="d-flex justify-content-between align-items-center">
-										<div class="btn-group"
-											data-id="<?=$post['id']?>">
-											<button type="button" class="btn btn-sm <?=$isLiked ? 'btn-primary liked' : 'btn-outline-primary'?> btn-like"><?=$isLiked ? 'Liked' : 'Like'?></button>
-											<?php
-											if (Session::isOwnerOf($p->getOwner())) {
-											?>
-											<button type="button" class="btn btn-sm btn-outline-danger btn-delete">Delete</button>
-											<?}?>
-										</div>
-										<small class="text-muted"><?=$uploaded_time_str?></small>
-									</div>
-								</div>
-							</div>
-						</div>
-						<?php
+						$owner = new User($p->getOwner());
+
+						Session::loadTemplate('index/photocard', [
+							'p' => $p,
+							'uploaded_time_str' => $uploaded_time_str,
+							'owner' => $owner
+						]);
 					}
 				}
 				?>
