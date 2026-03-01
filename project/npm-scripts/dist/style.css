@@ -1,4 +1,4 @@
-/*! Photogram build 22/2/2026 11:59 */
+/*! Photogram build 1/3/2026 17:54 */
 .bd-placeholder-img {
     font-size: 1.125rem;
     text-anchor: middle;
@@ -118,6 +118,12 @@ body {
     overflow-x: hidden;
     min-height: 100vh;
     margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
 }
 
 /* Animated gradient background for hero */

@@ -1,2 +1,27 @@
+# Photogram .gitignore
+
+# Production config (contains DB credentials)
 photogramconfig.json
+
+# Legacy dev directory
 php-class-project/
+
+# Docker runtime
+.env
+docker-compose.override.yml
+
+# PHP dependencies (install via composer install)
+/vendor/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Uploads (user content, not tracked)
+htdocs/uploads/*
+!htdocs/uploads/.gitkeep
+
+# Node modules (project build tools)
+project/npm-scripts/node_modules/

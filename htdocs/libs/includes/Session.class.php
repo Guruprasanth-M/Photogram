@@ -55,8 +55,9 @@ class Session
     }
 
 
-    public static function loadTemplate($name)
+    public static function loadTemplate($name, $data = [])
     {
+        extract($data);
         $name = str_replace('/htdocs/', '', $name); 
         $script = dirname(__DIR__, 2) . "/_templates/$name.php";
         if (is_file($script)) {

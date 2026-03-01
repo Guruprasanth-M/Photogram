@@ -1,0 +1,68 @@
+services:
+
+  # ─── PHP / Apache application ───────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: photogram_app
+    restart: unless-stopped
+    ports:
+      - "8120:80"
+    volumes:
+      # Persist uploads between container restarts
+      - uploads_data:/var/www/html/htdocs/uploads
+      # Mount the docker config so the app can read DB credentials
+      - ./project/docker-config.json:/var/www/html/project/photogramconfig.json:ro
+    environment:
+      - APACHE_LOG_DIR=/var/log/apache2
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - photogram_net
+
+  # ─── MySQL 8 database ───────────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: photogram_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootsecret}
+      MYSQL_DATABASE:      ${MYSQL_DATABASE:-photogram}
+      MYSQL_USER:          ${MYSQL_USER:-photogram}
+      MYSQL_PASSWORD:      ${MYSQL_PASSWORD:-photogram}
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      # Auto-create schema on first start
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost",
+             "-u", "root", "--password=${MYSQL_ROOT_PASSWORD:-rootsecret}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - photogram_net
+
+  # ─── Adminer (database UI) ──────────────────────────────────
+  adminer:
+    image: adminer:latest
+    container_name: photogram_adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - photogram_net
+
+volumes:
+  db_data:
+  uploads_data:
+
+networks:
+  photogram_net:
+    driver: bridge

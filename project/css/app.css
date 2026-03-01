@@ -33,6 +33,12 @@ body {
     overflow-x: hidden;
     min-height: 100vh;
     margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
 }
 
 /* Animated gradient background for hero */

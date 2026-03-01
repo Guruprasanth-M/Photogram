@@ -1,42 +1,162 @@
-name: Deploy Photogram
+name: Photogram CI/CD
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  deploy:
-    runs-on: self-hosted
+  # ─────────────────────────────────────────────
+  # 1. PHP Syntax Lint
+  # ─────────────────────────────────────────────
+  lint:
+    name: PHP Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Run PHP lint check
+        run: |
+          echo "Running PHP syntax validation..."
+          find . -name "*.php" \
+            ! -path "./vendor/*" \
+            ! -path "./project/npm-scripts/*" \
+            -exec php -l {} \; | grep -v "No syntax errors"
+          echo "✅ PHP lint passed"
+
+  # ─────────────────────────────────────────────
+  # 2. Docker Build + Smoke Test
+  # ─────────────────────────────────────────────
+  docker-build:
+    name: Docker Build & Smoke Test
+    runs-on: ubuntu-latest
+    needs: lint
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy application
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: |
+          echo "Building Docker image..."
+          docker build -t photogram:ci .
+          echo "✅ Docker image built successfully"
+
+      - name: Smoke test with docker-compose
+        run: |
+          # Create .env for docker-compose
+          cp .env.example .env
+
+          # Start services
+          docker compose up -d
+
+          # Wait for the app to be ready (max 60s)
+          echo "Waiting for app to start..."
+          timeout 60 bash -c '
+            until curl -sf http://localhost:8120 > /dev/null 2>&1; do
+              sleep 2
+            done
+          '
+
+          # Assert HTTP 200
+          STATUS=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:8120)
+          echo "HTTP status: $STATUS"
+          if [ "$STATUS" != "200" ]; then
+            echo "❌ Smoke test failed: expected 200, got $STATUS"
+            docker compose logs app
+            exit 1
+          fi
+          echo "✅ Smoke test passed (HTTP $STATUS)"
+
+      - name: Collect Docker logs on failure
+        if: failure()
+        run: docker compose logs
+
+      - name: Stop containers
+        if: always()
+        run: docker compose down -v
+
+  # ─────────────────────────────────────────────
+  # 3. Push image to GitHub Container Registry
+  # ─────────────────────────────────────────────
+  docker-push:
+    name: Push to GHCR
+    runs-on: ubuntu-latest
+    needs: docker-build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/photogram:latest
+            ghcr.io/${{ github.repository_owner }}/photogram:${{ github.sha }}
+          cache-from: type=gha
+          cache-to:   type=gha,mode=max
+
+  # ─────────────────────────────────────────────
+  # 4. Self-hosted deploy (existing Azure VM)
+  # ─────────────────────────────────────────────
+  deploy:
+    name: Deploy to Azure VM
+    runs-on: self-hosted
+    needs: docker-build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy application files
         run: |
           echo "Deploying application..."
 
           rm -rf /home/azureuser/htdocs/photogram
-
           mkdir -p /home/azureuser/htdocs/photogram
-
           cp -r "$(pwd)"/* /home/azureuser/htdocs/photogram/
 
-          # Clean up unnecessary files/folders
+          # Remove dev-only files
           rm -rf /home/azureuser/htdocs/photogram/.git
           rm -rf /home/azureuser/htdocs/photogram/README.md
           rm -rf /home/azureuser/htdocs/photogram/.github
           rm -rf /home/azureuser/htdocs/photogram/project/npm-scripts
-          rm -rf /home/azureuser/htdocs/photogram/project/js
-          rm -rf /home/azureuser/htdocs/photogram/project/css
-          rm -rf /home/azureuser/htdocs/photogram/project/sampleconfig.json
-          rm -rf /home/azureuser/htdocs/photogram/.vscode
-          rm -f /home/azureuser/htdocs/photogram/composer.json
-          rm -f /home/azureuser/htdocs/photogram/htdocs/.gitignore
-          rm -f /home/azureuser/htdocs/photogram/htdocs/.gitattributes
+          rm -f  /home/azureuser/htdocs/photogram/composer.json
+          rm -f  /home/azureuser/htdocs/photogram/htdocs/.gitignore
 
-          # Copy production config if it exists
-          cp /home/azureuser/photogramconfig.json /home/azureuser/htdocs/photogram/project/ 2>/dev/null || true
+          # Restore production config
+          cp /home/azureuser/photogramconfig.json \
+             /home/azureuser/htdocs/photogram/project/ 2>/dev/null || true
 
-          echo "Application successfully deployed."
+          echo "✅ Deployment complete"
