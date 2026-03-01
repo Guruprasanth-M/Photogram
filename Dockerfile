@@ -6,6 +6,7 @@ FROM php:8.2-apache
 
 # ─── System packages ────────────────────────────────────────
 RUN apt-get update && apt-get install -y \
+        curl \
         libexif-dev \
         libpng-dev \
         libjpeg-dev \
@@ -48,5 +49,5 @@ RUN rm -f /var/www/html/htdocs/uploads \
 # ─── Expose port ────────────────────────────────────────────
 EXPOSE 80
 
-HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+HEALTHCHECK --interval=10s --timeout=5s --start-period=10s --retries=3 \
     CMD curl -f http://localhost/ || exit 1

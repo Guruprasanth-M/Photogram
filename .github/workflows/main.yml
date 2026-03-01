@@ -35,10 +35,10 @@ jobs:
             fi
           done < <(find . -name "*.php" ! -path "./vendor/*" ! -path "./project/npm-scripts/*" -print0)
           if [ "$ERROR" -eq 1 ]; then
-            echo "❌ PHP lint failed"
+            echo " PHP lint failed"
             exit 1
           fi
-          echo "✅ PHP lint passed"
+          echo " PHP lint passed"
 
   # ─────────────────────────────────────────────
   # 2. Docker Build + Smoke Test
@@ -52,40 +52,38 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build Docker image
+      - name: Build and start containers
         run: |
-          echo "Building Docker image..."
-          docker build -t photogram:ci .
-          echo "✅ Docker image built successfully"
-
-      - name: Smoke test with docker-compose
-        run: |
-          # Create .env for docker-compose
           cp .env.example .env
+          docker compose up -d --build
 
-          # Start services
-          docker compose up -d
+      - name: Wait for app to be healthy
+        run: |
+          echo "Waiting for app container to become healthy..."
+          for i in $(seq 1 30); do
+            STATUS=$(docker inspect --format='{{.State.Health.Status}}' photogram_app 2>/dev/null || echo "not_found")
+            echo "  [$i/30] app status: $STATUS"
+            if [ "$STATUS" = "healthy" ]; then
+              echo " App container is healthy"
+              break
+            fi
+            if [ "$STATUS" = "not_found" ] || [ "$STATUS" = "exited" ]; then
+              echo " App container failed to start"
+              docker compose logs app
+              exit 1
+            fi
+            sleep 5
+          done
 
-          # Wait for the app to be ready (max 60s)
-          echo "Waiting for app to start..."
-          timeout 60 bash -c '
-            until curl -sf http://localhost:8120 > /dev/null 2>&1; do
-              sleep 2
-            done
-          '
-
-          # Assert HTTP 200
+          # Final health check via HTTP
           STATUS=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:8120)
           echo "HTTP status: $STATUS"
           if [ "$STATUS" != "200" ]; then
-            echo "❌ Smoke test failed: expected 200, got $STATUS"
+            echo " Smoke test failed: expected 200, got $STATUS"
             docker compose logs app
             exit 1
           fi
-          echo "✅ Smoke test passed (HTTP $STATUS)"
+          echo " Smoke test passed (HTTP $STATUS)"
 
       - name: Collect Docker logs on failure
         if: failure()
@@ -161,4 +159,4 @@ jobs:
           cp /home/azureuser/photogramconfig.json \
              /home/azureuser/htdocs/photogram/project/ 2>/dev/null || true
 
-          echo "✅ Deployment complete"
+          echo "Deployment complete"
